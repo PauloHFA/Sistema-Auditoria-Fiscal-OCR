@@ -1,0 +1,33 @@
+{
+  "document_id": "receipt-012",
+  "image": "receipt-012.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.012/0001-17\nEMISSAO: 12/01/2025 10:30\nITENS DA VENDA\n001 LEITE INTEGRAL 2,000 UN 5,60 11,20\n002 FEIJAO CARIOCA 2,000 UN 5,83 11,66\n003 ACUCAR 2,000 UN 6,06 12,12\nVALOR TOTAL R$ 34,98\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000012000117",
+    "cpf": null,
+    "issue_datetime": "2025-01-12T10:30:00",
+    "total_amount": "34.98",
+    "access_key": null,
+    "items": [
+      {
+        "description": "LEITE INTEGRAL",
+        "quantity": "2",
+        "unit_price": "5.6",
+        "total_price": "11.2"
+      },
+      {
+        "description": "FEIJAO CARIOCA",
+        "quantity": "2",
+        "unit_price": "5.83",
+        "total_price": "11.66"
+      },
+      {
+        "description": "ACUCAR",
+        "quantity": "2",
+        "unit_price": "6.06",
+        "total_price": "12.12"
+      }
+    ],
+    "should_review": true
+  }
+}

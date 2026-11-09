@@ -1,0 +1,21 @@
+{
+  "document_id": "receipt-049",
+  "image": "receipt-049.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.049/0001-44\nEMISSAO: 18/02/2025 10:30\nITENS DA VENDA\n001 ACUCAR 1,000 UN 11,89 11,89\nVALOR TOTAL R$ 11,89\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000049000144",
+    "cpf": null,
+    "issue_datetime": "2025-02-18T10:30:00",
+    "total_amount": "11.89",
+    "access_key": null,
+    "items": [
+      {
+        "description": "ACUCAR",
+        "quantity": "1",
+        "unit_price": "11.89",
+        "total_price": "11.89"
+      }
+    ],
+    "should_review": false
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "document_id": "receipt-043",
+  "image": "receipt-043.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.043/0001-77\nEMISSAO: 12/02/2025 10:30\nITENS DA VENDA\n001 FEIJAO CARIOCA 1,000 UN 10,87 10,87\nVALOR TOTAL R$ 10,87\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000043000177",
+    "cpf": null,
+    "issue_datetime": "2025-02-12T10:30:00",
+    "total_amount": "10.87",
+    "access_key": null,
+    "items": [
+      {
+        "description": "FEIJAO CARIOCA",
+        "quantity": "1",
+        "unit_price": "10.87",
+        "total_price": "10.87"
+      }
+    ],
+    "should_review": false
+  }
+}

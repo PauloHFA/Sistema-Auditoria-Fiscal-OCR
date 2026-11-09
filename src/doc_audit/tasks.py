@@ -51,12 +51,18 @@ def _document_pages(document: Document) -> Iterator[ndarray]:
                 raise ValueError(f"PDF excede o limite de {settings.max_pdf_pages} páginas")
             for page_number in range(len(pdf)):
                 page = pdf.load_page(page_number)
+                estimated_pixels = page.rect.width * 300 / 72 * page.rect.height * 300 / 72
+                if estimated_pixels > settings.max_image_pixels:
+                    raise ValueError(
+                        f"Página {page_number + 1} excede o limite de "
+                        f"{settings.max_image_pixels} pixels"
+                    )
                 pixmap = page.get_pixmap(matrix=fitz.Matrix(300 / 72, 300 / 72), alpha=False)
-                yield decode_image(pixmap.tobytes("png"))
+                yield decode_image(pixmap.tobytes("png"), settings.max_image_pixels)
         finally:
             pdf.close()
     else:
-        yield decode_image(content)
+        yield decode_image(content, settings.max_image_pixels)
 
 
 @celery_app.task(
@@ -83,9 +89,11 @@ def process_document(self: Task, document_id: str) -> None:
             ocr_results = []
             qr_payloads: list[str] = []
             processed_images = []
-            engine_version = str(pytesseract.get_tesseract_version())
+            engine_version: str | None = None
             render_started = time.perf_counter()
             for page_number, image in enumerate(pages, start=1):
+                if engine_version is None:
+                    engine_version = str(pytesseract.get_tesseract_version())
                 _log_stage(document_id, "document_render", render_started, page_number)
                 stage_started = time.perf_counter()
                 prepared = preprocess_image(image)

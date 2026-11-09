@@ -1,0 +1,21 @@
+{
+  "document_id": "receipt-025",
+  "image": "receipt-025.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.025/0001-95\nEMISSAO: 25/01/2025 10:30\nITENS DA VENDA\n001 ARROZ TIPO 1 1,000 UN 7,81 7,81\nVALOR TOTAL R$ 7,81\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000025000195",
+    "cpf": null,
+    "issue_datetime": "2025-01-25T10:30:00",
+    "total_amount": "7.81",
+    "access_key": null,
+    "items": [
+      {
+        "description": "ARROZ TIPO 1",
+        "quantity": "1",
+        "unit_price": "7.81",
+        "total_price": "7.81"
+      }
+    ],
+    "should_review": false
+  }
+}

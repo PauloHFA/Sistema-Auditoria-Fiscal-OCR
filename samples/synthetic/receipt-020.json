@@ -1,0 +1,27 @@
+{
+  "document_id": "receipt-020",
+  "image": "receipt-020.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.020/0001-62\nEMISSAO: 20/01/2025 10:30\nITENS DA VENDA\n001 ARROZ TIPO 1 2,000 UN 6,96 13,92\n002 CAFE TORRADO 2,000 UN 7,19 14,38\nVALOR TOTAL R$ 28,30\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000020000162",
+    "cpf": null,
+    "issue_datetime": "2025-01-20T10:30:00",
+    "total_amount": "28.30",
+    "access_key": null,
+    "items": [
+      {
+        "description": "ARROZ TIPO 1",
+        "quantity": "2",
+        "unit_price": "6.96",
+        "total_price": "13.92"
+      },
+      {
+        "description": "CAFE TORRADO",
+        "quantity": "2",
+        "unit_price": "7.19",
+        "total_price": "14.38"
+      }
+    ],
+    "should_review": false
+  }
+}

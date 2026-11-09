@@ -1,0 +1,27 @@
+{
+  "document_id": "receipt-029",
+  "image": "receipt-029.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.029/0001-73\nEMISSAO: 29/01/2025 10:30\nITENS DA VENDA\n001 ACUCAR 1,000 UN 8,49 8,49\n002 ARROZ TIPO 1 1,000 UN 8,72 8,72\nVALOR TOTAL R$ 17,21\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000029000173",
+    "cpf": null,
+    "issue_datetime": "2025-01-29T10:30:00",
+    "total_amount": "17.21",
+    "access_key": null,
+    "items": [
+      {
+        "description": "ACUCAR",
+        "quantity": "1",
+        "unit_price": "8.49",
+        "total_price": "8.49"
+      },
+      {
+        "description": "ARROZ TIPO 1",
+        "quantity": "1",
+        "unit_price": "8.72",
+        "total_price": "8.72"
+      }
+    ],
+    "should_review": false
+  }
+}

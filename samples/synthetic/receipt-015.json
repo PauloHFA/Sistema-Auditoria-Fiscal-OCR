@@ -1,0 +1,33 @@
+{
+  "document_id": "receipt-015",
+  "image": "receipt-015.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.015/0001-50\nEMISSAO: 15/01/2025 10:30\nITENS DA VENDA\n001 ARROZ TIPO 1 1,000 UN 6,11 6,11\n002 CAFE TORRADO 1,000 UN 6,34 6,34\n003 LEITE INTEGRAL 1,000 UN 6,57 6,57\nVALOR TOTAL R$ 19,02\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000015000150",
+    "cpf": null,
+    "issue_datetime": "2025-01-15T10:30:00",
+    "total_amount": "19.02",
+    "access_key": null,
+    "items": [
+      {
+        "description": "ARROZ TIPO 1",
+        "quantity": "1",
+        "unit_price": "6.11",
+        "total_price": "6.11"
+      },
+      {
+        "description": "CAFE TORRADO",
+        "quantity": "1",
+        "unit_price": "6.34",
+        "total_price": "6.34"
+      },
+      {
+        "description": "LEITE INTEGRAL",
+        "quantity": "1",
+        "unit_price": "6.57",
+        "total_price": "6.57"
+      }
+    ],
+    "should_review": false
+  }
+}

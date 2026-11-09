@@ -1,0 +1,21 @@
+{
+  "document_id": "receipt-016",
+  "image": "receipt-016.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.016/0001-02\nEMISSAO: 16/01/2025 10:30\nITENS DA VENDA\n001 CAFE TORRADO 2,000 UN 6,28 12,56\nVALOR TOTAL R$ 12,56\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000016000102",
+    "cpf": null,
+    "issue_datetime": "2025-01-16T10:30:00",
+    "total_amount": "12.56",
+    "access_key": null,
+    "items": [
+      {
+        "description": "CAFE TORRADO",
+        "quantity": "2",
+        "unit_price": "6.28",
+        "total_price": "12.56"
+      }
+    ],
+    "should_review": false
+  }
+}

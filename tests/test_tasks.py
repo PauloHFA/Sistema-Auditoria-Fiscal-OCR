@@ -2,6 +2,7 @@ from collections.abc import Generator
 from decimal import Decimal
 from uuid import uuid4
 
+import cv2
 import numpy as np
 import pymupdf
 import pytest
@@ -10,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 import doc_audit.tasks as tasks_module
+from doc_audit.config import settings
 from doc_audit.models import Base, Document, Extraction
 from doc_audit.ocr import OCRResult
 
@@ -107,3 +109,35 @@ def test_pdf_page_is_rendered_at_300_dpi(tmp_path) -> None:
 
     assert len(pages) == 1
     assert pages[0].shape[:2] == (300, 300)
+
+
+def test_processing_rejects_images_above_configured_pixel_limit(
+    task_sessions, monkeypatch, tmp_path
+) -> None:
+    document_id = uuid4()
+    with task_sessions() as db:
+        db.add(
+            Document(
+                id=document_id,
+                file_hash="d" * 64,
+                original_name="oversized.jpg",
+                mime_type="image/jpeg",
+                storage_path=str(tmp_path / "oversized.jpg"),
+                status="PENDING",
+            )
+        )
+        db.commit()
+    monkeypatch.setattr(tasks_module, "SessionLocal", task_sessions)
+    success, encoded = cv2.imencode(".jpg", np.zeros((20, 20, 3), dtype=np.uint8))
+    assert success
+    (tmp_path / "oversized.jpg").write_bytes(encoded.tobytes())
+    monkeypatch.setattr(tasks_module.process_document, "max_retries", 0)
+    monkeypatch.setattr(settings, "max_image_pixels", 100)
+
+    tasks_module.process_document.run(str(document_id))
+
+    with task_sessions() as db:
+        document = db.get(Document, document_id)
+        assert document is not None
+        assert document.status == "FAILED"
+        assert "excede o limite" in document.error_message

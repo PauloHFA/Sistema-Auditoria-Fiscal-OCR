@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     upload_dir: str = "./data/uploads"
     processed_dir: str = "./data/processed"
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, gt=0)
+    max_image_pixels: int = Field(default=20_000_000, gt=0)
     max_pdf_pages: int = Field(default=20, gt=0)
     audit_tolerance: str = "0.05"
     min_field_confidence: float = Field(default=60, ge=0, le=100)

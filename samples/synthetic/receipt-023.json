@@ -1,0 +1,27 @@
+{
+  "document_id": "receipt-023",
+  "image": "receipt-023.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.023/0001-04\nEMISSAO: 23/01/2025 10:30\nITENS DA VENDA\n001 FEIJAO CARIOCA 1,000 UN 7,47 7,47\n002 ACUCAR 1,000 UN 7,70 7,70\nVALOR TOTAL R$ 15,17\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000023000104",
+    "cpf": null,
+    "issue_datetime": "2025-01-23T10:30:00",
+    "total_amount": "15.17",
+    "access_key": null,
+    "items": [
+      {
+        "description": "FEIJAO CARIOCA",
+        "quantity": "1",
+        "unit_price": "7.47",
+        "total_price": "7.47"
+      },
+      {
+        "description": "ACUCAR",
+        "quantity": "1",
+        "unit_price": "7.7",
+        "total_price": "7.7"
+      }
+    ],
+    "should_review": false
+  }
+}

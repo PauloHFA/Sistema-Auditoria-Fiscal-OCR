@@ -1,8 +1,20 @@
+from io import BytesIO
+
 import cv2
 import numpy as np
+from PIL import Image
 
 
-def decode_image(data: bytes) -> np.ndarray:
+def decode_image(data: bytes, max_pixels: int = 20_000_000) -> np.ndarray:
+    try:
+        with Image.open(BytesIO(data)) as header:
+            if header.format not in {"JPEG", "PNG"}:
+                raise ValueError("Formato de imagem não suportado")
+            if header.width * header.height > max_pixels:
+                raise ValueError(f"Imagem excede o limite de {max_pixels} pixels")
+            header.verify()
+    except (OSError, Image.DecompressionBombError) as exc:
+        raise ValueError("Não foi possível validar a imagem") from exc
     image = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
     if image is None or image.size == 0:
         raise ValueError("Não foi possível decodificar a imagem")

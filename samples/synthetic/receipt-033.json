@@ -1,0 +1,33 @@
+{
+  "document_id": "receipt-033",
+  "image": "receipt-033.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.033/0001-31\nEMISSAO: 02/02/2025 10:30\nITENS DA VENDA\n001 FEIJAO CARIOCA 1,000 UN 9,17 9,17\n002 ACUCAR 1,000 UN 9,40 9,40\n003 ARROZ TIPO 1 1,000 UN 9,63 9,63\nVALOR TOTAL R$ 28,20\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000033000131",
+    "cpf": null,
+    "issue_datetime": "2025-02-02T10:30:00",
+    "total_amount": "28.20",
+    "access_key": null,
+    "items": [
+      {
+        "description": "FEIJAO CARIOCA",
+        "quantity": "1",
+        "unit_price": "9.17",
+        "total_price": "9.17"
+      },
+      {
+        "description": "ACUCAR",
+        "quantity": "1",
+        "unit_price": "9.4",
+        "total_price": "9.4"
+      },
+      {
+        "description": "ARROZ TIPO 1",
+        "quantity": "1",
+        "unit_price": "9.63",
+        "total_price": "9.63"
+      }
+    ],
+    "should_review": false
+  }
+}

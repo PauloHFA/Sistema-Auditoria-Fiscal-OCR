@@ -15,10 +15,12 @@ API local para receber cupons fiscais, recibos e notas em imagem ou PDF, executa
 | Validação fiscal, auditoria aritmética e encaminhamento para revisão | Implementados |
 | Correção manual com histórico, exportação e exclusão | Implementadas |
 | Métricas, logs estruturados e rotina de retenção | Implementados em sua forma inicial |
-| Testes automatizados | 38 testes; cobertura medida de 80% no código total na última execução |
-| Dataset rotulado e metas reais de acurácia OCR | Pendentes |
-| Execução integral dos containers e validação com Tesseract real | Pendente: Docker Desktop/Linux Engine não estava disponível durante a validação |
-| Teste de carga, CI e medição de desempenho no hardware-alvo | Pendentes |
+| Testes automatizados | Testes unitários e de integração local; o CI também valida o pipeline com Redis, PostgreSQL e Tesseract reais |
+| Dataset de desenvolvimento | 50 recibos sintéticos gerados e versionados, incluindo casos de revisão; não substituem documentos reais anonimizados |
+| Metas reais de acurácia OCR | Pendentes: precisam ser medidas também em amostra representativa de documentos reais anonimizados |
+| Execução integral dos containers e validação com Tesseract real | Validada localmente com PostgreSQL, Redis e Tesseract; também automatizada no CI |
+| Teste de carga e medição de desempenho no hardware-alvo | 100 documentos sintéticos medidos localmente; o resultado no host de referência de 4 vCPU ainda está pendente |
+| CI para testes, Ruff, mypy, integração Compose e relatórios OCR sintéticos | Implementada configuração em GitHub Actions |
 
 O projeto está em estágio de MVP inicial. Os testes automatizados verificam componentes e fluxos controlados; eles não substituem a avaliação do OCR com um conjunto representativo de documentos reais anonimizados.
 
@@ -107,7 +109,7 @@ Edite `.env` e substitua `API_KEY` por uma chave própria antes de iniciar. Ent�
 docker compose up --build
 ```
 
-A API ficará disponível em `http://localhost:8000` e o Swagger em `http://localhost:8000/docs`. A primeira inicialização da API aplica a migração do banco.
+A API ficará disponível em `http://localhost:${API_PORT:-8000}` e o Swagger em `http://localhost:${API_PORT:-8000}/docs`. Se a porta padrão já estiver em uso, ajuste `API_PORT` em `.env`. A primeira inicialização da API aplica a migração do banco.
 
 Os valores de usuário e senha do PostgreSQL no Compose são somente para desenvolvimento local; troque-os antes de qualquer implantação compartilhada. Os serviços não devem ser expostos diretamente à Internet sem endurecimento adicional.
 
@@ -153,11 +155,13 @@ Configurações disponíveis (também listadas em `.env.example`):
 | Variável | Padrão | Uso |
 |---|---|---|
 | `API_KEY` | `change-this-local-key` | Chave de acesso às rotas de documentos. Altere antes de uso compartilhado. |
+| `API_PORT` | `8000` | Porta local publicada pelo Compose. |
 | `DATABASE_URL` | `sqlite:///./doc_audit.db` | URL SQLAlchemy. No Compose, aponta para PostgreSQL. |
 | `REDIS_URL` | `redis://localhost:6379/0` | Broker e backend de resultados Celery. |
 | `UPLOAD_DIR` | `./data/uploads` | Armazenamento dos arquivos originais. |
 | `PROCESSED_DIR` | `./data/processed` | Destino das imagens processadas quando habilitado. |
 | `MAX_UPLOAD_BYTES` | `10485760` | Tamanho máximo por upload (10 MiB). |
+| `MAX_IMAGE_PIXELS` | `20000000` | Limite de pixels decodificados por página para restringir imagens desproporcionais. |
 | `MAX_PDF_PAGES` | `20` | Número máximo de páginas do PDF. |
 | `AUDIT_TOLERANCE` | `0.05` | Tolerância monetária da auditoria. |
 | `MIN_FIELD_CONFIDENCE` | `60` | Limiar de confiança do OCR (0 a 100). |
@@ -174,11 +178,17 @@ mypy src scripts
 
 A suíte cobre validadores, parsers, limiarização, deskew em rotações de `-15°`, `-5°`, `0°`, `5°` e `15°`, renderização de PDF a 300 DPI, assinaturas de arquivos, autenticação da API, upload, duplicidade, correção manual, auditoria e uma execução simulada do worker.
 
-Na última validação local: 38 testes passaram; cobertura total foi de 80%. Os módulos `parsers` e `validation` superaram 80% nessa execução. O OCR e a fila são simulados em testes; isso não comprova qualidade nem tempo de processamento com o Tesseract real.
+Na última validação local: 45 testes passaram; cobertura total foi de 82%. O workflow também executa o fluxo com Tesseract real e anexa os relatórios das duas configurações de pré-processamento como artefatos do CI. Os testes unitários continuam simulando a fila/OCR para serem determinísticos.
 
 ## Avaliar acurácia do OCR
 
-O avaliador compara texto, campos extraídos, itens e auditoria com ground truth, calculando CER, WER, acurácia por campo e taxa de falso aprovado. Não há um dataset rotulado incluído neste repositório: crie um conjunto com imagens sintéticas ou anonimizadas antes de usar os resultados. Não coloque documentos com dados pessoais reais no Git.
+O avaliador compara texto, campos extraídos, itens e auditoria com ground truth, calculando CER, WER, acurácia por campo e taxa de falso aprovado. O repositório inclui 50 recibos sintéticos em `samples/synthetic`, cada um com imagem e ground truth JSON. Eles ajudam a validar o fluxo e o avaliador, mas não representam a diversidade de layouts, fotografias ou qualidade de documentos fiscais reais. Complemente-os com documentos anonimizados obtidos com autorização antes de tirar conclusões sobre qualidade do produto. Nunca coloque dados pessoais reais no Git.
+
+Para regenerar o conjunto sintético:
+
+```powershell
+python scripts/generate_synthetic_dataset.py --output-dir samples/synthetic --count 50
+```
 
 Crie um JSON por imagem no diretório do conjunto. Exemplo `samples/test/cupom-001.json`:
 
@@ -199,24 +209,44 @@ Crie um JSON por imagem no diretório do conjunto. Exemplo `samples/test/cupom-0
 }
 ```
 
-Execute o mesmo conjunto com os dois métodos:
+Execute o conjunto sintético com os dois métodos para uma comparação inicial:
 
 ```powershell
-python scripts/evaluate_accuracy.py --dataset samples/test --threshold adaptive --output accuracy-adaptive.json
-python scripts/evaluate_accuracy.py --dataset samples/test --threshold otsu --output accuracy-otsu.json
+python scripts/evaluate_accuracy.py --dataset samples/synthetic --threshold adaptive --output accuracy-adaptive.json
+python scripts/evaluate_accuracy.py --dataset samples/synthetic --threshold otsu --output accuracy-otsu.json
 ```
+
+Validação local observada em 50 recibos sintéticos: `adaptive` obteve CER 0,00343, WER 0,02107, acurácia de CNPJ 92%, data/total 100%, itens 80% e nenhum falso aprovado entre 10 casos rotulados para revisão. `otsu` obteve CER 0,00394, WER 0,02606, CNPJ 90%, data/total 100%, itens 80% e também nenhum falso aprovado. Esses números servem apenas para verificar o fluxo com dados sintéticos; não demonstram acurácia em documentos fiscais reais.
 
 Mantenha o conjunto de teste congelado e fora do ajuste dos parâmetros. As metas de qualidade documentadas (por exemplo, acurácia mínima de 90% para campos críticos e falso aprovado abaixo de 2%) só poderão ser confirmadas após coletar e rotular dados adequados e executar essa avaliação.
 
+## Smoke test de integração e carga
+
+Com o Compose ativo, o smoke test envia uma imagem sintética à API e espera que o worker execute OCR e auditoria:
+
+```powershell
+python scripts/smoke_test.py --api-url http://localhost:8000 --api-key sua-chave-local
+```
+
+Para medir um lote de 100 documentos distintos em imagens de aproximadamente 2 MP:
+
+```powershell
+python scripts/generate_synthetic_dataset.py --output-dir samples/load --count 100
+python scripts/load_test.py --api-url http://localhost:8000 --api-key sua-chave-local --dataset samples/load --documents 100 --concurrency 4
+```
+
+O relatório inclui latência de upload, tempo observado até o estado terminal (inclui fila) nos percentis p50/p95, throughput e contagem por estado. Registre resultados com hardware, versões, configuração/quantidade de workers e commit usados. Isso não substitui medição no host de referência de 4 vCPU.
+
+Medições locais de 100 recibos sintéticos com Tesseract 5.3.0, Docker Engine com 16 CPUs e 15,6 GiB de memória: com concorrência de upload 4, throughput 0,712 documento/s e p95 até estado terminal 10,063 s; com concorrência 2, throughput 0,547 documento/s e p95 9,094 s. A execução com concorrência 4 ultrapassou por pouco a meta de 10 s; use a configuração de 2 apenas como referência preliminar, pois estes números não foram obtidos no hardware-alvo de 4 vCPU.
+
 ## Pendências conhecidas
 
-- Criar/versionar um dataset seguro de 50–100 documentos rotulados, com conjunto de teste congelado, e registrar uma linha de base de CER/WER e acurácia por campo.
-- Executar o OCR real com Tesseract em português e validar processamento ponta a ponta com PostgreSQL e Redis reais. A construção dos containers não pôde ser verificada enquanto o Docker Desktop Linux Engine estava indisponível.
-- Medir os critérios de desempenho (p95 por página) e carga (lote de 100 documentos) no hardware definido.
-- Configurar CI para lint, tipagem, testes e relatório de métricas.
+- Substituir/ampliar a amostra sintética por documentos anonimizados, autorizados e representativos; congelar o conjunto de teste e avaliar CER/WER, campos críticos e falso aprovado.
+- Executar e registrar um lote de 100 documentos no hardware-alvo de 4 vCPU. `/metrics` fornece a duração média geral; o p95 por documento é medido pelo script de carga.
+- Acompanhar a primeira execução do workflow GitHub Actions no repositório remoto; o CI foi adicionado localmente, mas ainda não foi executado no GitHub.
 - Ampliar e avaliar o parser heurístico de itens em diferentes layouts; a versão atual reconhece um formato comum de linha de NFC-e, não todos os modelos de cupom.
 - Refinar controles operacionais antes de uma implantação compartilhada: segredos e credenciais fora dos padrões locais, proteção de endpoints operacionais, política de mascaramento para CPF e retenção/exclusão auditáveis.
-- Refinar métricas por etapa e garantir configuração reprodutível de todas as dependências do sistema, inclusive Tesseract.
+- Expor métricas agregadas consultáveis por etapa; a aplicação já registra durações estruturadas por etapa, e o Tesseract/idioma português estão fixados na imagem Docker.
 
 ## Fora do escopo atual
 

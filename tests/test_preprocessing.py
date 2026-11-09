@@ -23,8 +23,16 @@ def test_deskew_corrects_known_small_rotations(rotation: int) -> None:
 
 
 def test_decode_image_rejects_invalid_bytes() -> None:
-    with pytest.raises(ValueError, match="decodificar"):
+    with pytest.raises(ValueError, match="validar"):
         decode_image(b"not an image")
+
+
+def test_decode_image_checks_pixel_limit_before_decoding() -> None:
+    success, encoded = cv2.imencode(".png", np.zeros((20, 20, 3), dtype=np.uint8))
+    assert success
+
+    with pytest.raises(ValueError, match="limite de 100 pixels"):
+        decode_image(encoded.tobytes(), max_pixels=100)
 
 
 def test_preprocess_image_upscales_and_returns_binary_image() -> None:

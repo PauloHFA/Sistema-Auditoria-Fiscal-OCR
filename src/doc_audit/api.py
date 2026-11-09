@@ -85,6 +85,7 @@ def _serialize_document(document: Document, *, mask_cnpj: bool = False) -> dict:
             if extraction.total_amount is not None
             else None,
             "access_key": extraction.access_key,
+            "raw_text": extraction.raw_text,
             "field_confidences": extraction.field_confidences,
             "items": [
                 {

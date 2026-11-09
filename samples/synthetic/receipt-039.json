@@ -1,0 +1,33 @@
+{
+  "document_id": "receipt-039",
+  "image": "receipt-039.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.039/0001-09\nEMISSAO: 08/02/2025 10:30\nITENS DA VENDA\n001 ACUCAR 1,000 UN 10,19 10,19\n002 ARROZ TIPO 1 1,000 UN 10,42 10,42\n003 CAFE TORRADO 1,000 UN 10,65 10,65\nVALOR TOTAL R$ 31,26\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000039000109",
+    "cpf": null,
+    "issue_datetime": "2025-02-08T10:30:00",
+    "total_amount": "31.26",
+    "access_key": null,
+    "items": [
+      {
+        "description": "ACUCAR",
+        "quantity": "1",
+        "unit_price": "10.19",
+        "total_price": "10.19"
+      },
+      {
+        "description": "ARROZ TIPO 1",
+        "quantity": "1",
+        "unit_price": "10.42",
+        "total_price": "10.42"
+      },
+      {
+        "description": "CAFE TORRADO",
+        "quantity": "1",
+        "unit_price": "10.65",
+        "total_price": "10.65"
+      }
+    ],
+    "should_review": false
+  }
+}

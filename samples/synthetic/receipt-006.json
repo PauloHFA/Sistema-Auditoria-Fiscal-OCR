@@ -1,0 +1,33 @@
+{
+  "document_id": "receipt-006",
+  "image": "receipt-006.png",
+  "expected": {
+    "raw_text": "MERCADO SINTETICO\nCNPJ: 00.000.006/0001-69\nEMISSAO: 06/01/2025 10:30\nITENS DA VENDA\n001 CAFE TORRADO 2,000 UN 4,58 9,16\n002 LEITE INTEGRAL 2,000 UN 4,81 9,62\n003 FEIJAO CARIOCA 2,000 UN 5,04 10,08\nVALOR TOTAL R$ 28,86\nOBRIGADO VOLTE SEMPRE",
+    "cnpj": "00000006000169",
+    "cpf": null,
+    "issue_datetime": "2025-01-06T10:30:00",
+    "total_amount": "28.86",
+    "access_key": null,
+    "items": [
+      {
+        "description": "CAFE TORRADO",
+        "quantity": "2",
+        "unit_price": "4.58",
+        "total_price": "9.16"
+      },
+      {
+        "description": "LEITE INTEGRAL",
+        "quantity": "2",
+        "unit_price": "4.81",
+        "total_price": "9.62"
+      },
+      {
+        "description": "FEIJAO CARIOCA",
+        "quantity": "2",
+        "unit_price": "5.04",
+        "total_price": "10.08"
+      }
+    ],
+    "should_review": false
+  }
+}
