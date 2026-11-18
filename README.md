@@ -1,6 +1,6 @@
-# DocAudit-OCR
+# Sistema de Auditoria Fiscal OCR (`DocAudit-OCR`)
 
-API local para receber cupons fiscais, recibos e notas em imagem ou PDF, executar OCR em português e auditar os dados extraídos. Este repositório contém a primeira implementação do MVP descrito em [DocAudit-OCR Documento de Requisitos e Especificações.pdf](./DocAudit-OCR%20Documento%20de%20Requisitos%20e%20Especifica%C3%A7%C3%B5es.pdf).
+API local-first para receber cupons fiscais, recibos e notas em imagem ou PDF, executar OCR em português (Tesseract + OpenCV) e auditar os dados extraídos. Este repositório contém a implementação descrita em [DocAudit-OCR Documento de Requisitos e Especificações.pdf](./DocAudit-OCR%20Documento%20de%20Requisitos%20e%20Especifica%C3%A7%C3%B5es.pdf) (ver também [PENDENCIAS.md](PENDENCIAS.md)).
 
 ## Situação da implementação
 
