@@ -38,16 +38,17 @@ jobs:
       - run: cp .env.example .env && sed -i 's/^API_KEY=.*/API_KEY=ci-test-key/' .env
       - run: docker compose up -d --build --wait --wait-timeout 240
       - run: uv run python scripts/smoke_test.py --api-url http://localhost:8000 --api-key ci-test-key
+      - run: mkdir -p "$RUNNER_TEMP/reports" && chmod 777 "$RUNNER_TEMP/reports"
       - run: >-
           docker compose run --rm --no-deps
           -v "$GITHUB_WORKSPACE/samples/synthetic:/dataset:ro"
-          -v "$RUNNER_TEMP:/reports"
+          -v "$RUNNER_TEMP/reports:/reports"
           api python scripts/evaluate_accuracy.py
           --dataset /dataset --threshold adaptive --output /reports/accuracy-adaptive.json
       - run: >-
           docker compose run --rm --no-deps
           -v "$GITHUB_WORKSPACE/samples/synthetic:/dataset:ro"
-          -v "$RUNNER_TEMP:/reports"
+          -v "$RUNNER_TEMP/reports:/reports"
           api python scripts/evaluate_accuracy.py
           --dataset /dataset --threshold otsu --output /reports/accuracy-otsu.json
       - if: always()
@@ -56,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: synthetic-ocr-accuracy
-          path: ${{ runner.temp }}/accuracy-*.json
+          path: ${{ runner.temp }}/reports/accuracy-*.json
           if-no-files-found: ignore
       - if: always()
         run: docker compose down -v
