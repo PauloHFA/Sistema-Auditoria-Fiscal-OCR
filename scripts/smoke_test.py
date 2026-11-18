@@ -32,9 +32,12 @@ async def run_smoke_test(api_url: str, api_key: str, timeout: float) -> None:
     async with httpx.AsyncClient(timeout=10) as client:
         deadline = time.monotonic() + 60
         while True:
-            response = await client.get(f"{api_url}/health")
-            if response.status_code == 200:
-                break
+            try:
+                response = await client.get(f"{api_url}/health")
+                if response.status_code == 200:
+                    break
+            except httpx.HTTPError:
+                pass
             if time.monotonic() >= deadline:
                 raise TimeoutError("API nao ficou saudavel no prazo")
             await asyncio.sleep(1)
